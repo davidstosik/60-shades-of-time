@@ -1,0 +1,4 @@
+/pebble-coredump_*.bin
+/pebble-screenshot_*
+.lock-waf_linux2_build
+build/
