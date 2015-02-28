@@ -1,6 +1,8 @@
 #include <pebble.h>
 #include "color_names.h"
 
+#define DEBUG false
+
 static Window *window;
 static TextLayer *name_layer;
 static TextLayer *time_layer;
@@ -28,10 +30,11 @@ void update_screen(struct tm *tick_time) {
   char *time_str = "00:00";
   clock_copy_time_string(time_str, 6);
 
-  text_layer_set_text(name_layer, color_names[tick_time->tm_min]);
+  uint8_t color_index = DEBUG ? tick_time->tm_sec : tick_time->tm_min;
+  text_layer_set_text(name_layer, color_names[color_index]);
   text_layer_set_text(time_layer, time_str);
 
-  GColor8 bg = get_color_from_minute(tick_time->tm_min);
+  GColor8 bg = get_color_from_minute(color_index);
   window_set_background_color(window, bg);
 
   text_layer_set_text_color(name_layer, gcolor_fgcolor(bg));
@@ -89,7 +92,8 @@ static void init(void) {
   });
   window_stack_push(window, true);
 
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  TimeUnits update_freq = DEBUG ? SECOND_UNIT : MINUTE_UNIT;
+  tick_timer_service_subscribe(update_freq, tick_handler);
 }
 
 static void deinit(void) {
