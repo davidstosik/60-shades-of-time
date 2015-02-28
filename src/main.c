@@ -24,17 +24,14 @@ static GColor8 gcolor_fgcolor(GColor8 bgcolor) {
   return r+g+b < 5 ? GColorWhite : GColorBlack;
 }
 
-void update_screen() {
-  time_t now = time(NULL);
-  struct tm * now_tm = localtime(&now);
-
+void update_screen(struct tm *tick_time) {
   char *time_str = "00:00";
   clock_copy_time_string(time_str, 6);
 
-  text_layer_set_text(name_layer, color_names[now_tm->tm_min]);
+  text_layer_set_text(name_layer, color_names[tick_time->tm_min]);
   text_layer_set_text(time_layer, time_str);
 
-  GColor8 bg = get_color_from_minute(now_tm->tm_min);
+  GColor8 bg = get_color_from_minute(tick_time->tm_min);
   window_set_background_color(window, bg);
 
   text_layer_set_text_color(name_layer, gcolor_fgcolor(bg));
@@ -70,12 +67,10 @@ static void window_load(Window *window) {
   text_layer_set_font(time_layer, font_roboto_49);
   text_layer_set_background_color(time_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
-
-  update_screen();
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-  update_screen();
+  update_screen(tick_time);
   if (units_changed & HOUR_UNIT) {// && settings->hour_vibes) {
     vibes_double_pulse();
   }
