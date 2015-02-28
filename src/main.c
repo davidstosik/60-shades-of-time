@@ -26,8 +26,8 @@ static GColor8 gcolor_fgcolor(GColor8 bgcolor) {
   r = (bgcolor.argb & 0b110000) >> 4;
   g = (bgcolor.argb & 0b001100) >> 2;
   b = bgcolor.argb & 0b000011;
-  float brightness = r*0.299 + g*0.587 + b*0.114;
-  return brightness < 1.75 ? GColorWhite : GColorBlack;
+  uint16_t brightness = r*299 + g*587 + b*114;
+  return brightness < 1750 ? GColorWhite : GColorBlack;
 }
 
 void update_screen(struct tm *tick_time) {
