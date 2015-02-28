@@ -19,11 +19,13 @@ static GColor8 get_color_from_minute(uint8_t minute) {
 }
 
 static GColor8 gcolor_fgcolor(GColor8 bgcolor) {
+  // Inspiration: http://stackoverflow.com/a/946734/2341409
   uint8_t r, g, b;
   r = (bgcolor.argb & 0b110000) >> 4;
   g = (bgcolor.argb & 0b001100) >> 2;
   b = bgcolor.argb & 0b000011;
-  return r+g+b < 5 ? GColorWhite : GColorBlack;
+  float brightness = r*0.299 + g*0.587 + b*0.114;
+  return brightness < 1.75 ? GColorWhite : GColorBlack;
 }
 
 void update_screen(struct tm *tick_time) {
