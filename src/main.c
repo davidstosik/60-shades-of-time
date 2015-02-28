@@ -24,10 +24,6 @@ static GColor8 gcolor_fgcolor(GColor8 bgcolor) {
   return r+g+b < 5 ? GColorWhite : GColorBlack;
 }
 
-static GColor8 gcolor_complementary(GColor8 color) {
-  return (GColor8){ argb: (0b00111111 ^ color.argb) };
-}
-
 void update_screen() {
   time_t now = time(NULL);
   struct tm * now_tm = localtime(&now);
