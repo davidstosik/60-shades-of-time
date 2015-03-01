@@ -83,6 +83,10 @@ static void window_load(Window *window) {
     .size = { bounds.size.w - 20, 2 }
   });
   layer_add_child(window_layer, bitmap_layer_get_layer(separator_layer));
+
+  time_t now = time(NULL);
+  struct tm *time_tick = localtime(&now);
+  update_screen(time_tick);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
