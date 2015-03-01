@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "color_names.h"
+#include "colorize.h"
 
 #define DEBUG false
 
@@ -11,45 +11,26 @@ static BitmapLayer *separator_layer;
 static char time_str[] = "00:00";
 static char date_str[] = "Xxxxxxxxxxxxxxxxxxxxxxx 00";
 
-static GColor8 get_color_from_minute(uint8_t minute) {
-  uint8_t argb = GColorBlackARGB8 + minute + 1;
-
-  if (argb >= GColorDarkGrayARGB8) { argb++; }
-  if (argb >= GColorLightGrayARGB8) { argb++; }
-
-  return (GColor8){ .argb = argb };
-}
-
-static GColor8 gcolor_fgcolor(GColor8 bgcolor) {
-  // Inspiration: http://stackoverflow.com/a/946734/2341409
-  uint8_t r, g, b;
-  r = (bgcolor.argb & 0b110000) >> 4;
-  g = (bgcolor.argb & 0b001100) >> 2;
-  b = bgcolor.argb & 0b000011;
-  uint16_t brightness = r*299 + g*587 + b*114;
-  return brightness < 1750 ? GColorWhite : GColorBlack;
-}
-
 void update_screen(struct tm *tick_time) {
   char *time_format = clock_is_24h_style() ? "%R" : "%I:%M";
 
   strftime(time_str, sizeof(time_str), time_format, tick_time);
   strftime(date_str, sizeof(date_str), "%B %e", tick_time);
 
-  uint8_t color_index = DEBUG ? tick_time->tm_sec : tick_time->tm_min;
 
-  text_layer_set_text(name_layer, color_names[color_index]);
   text_layer_set_text(time_layer, time_str);
   text_layer_set_text(date_layer, date_str);
 
-  GColor8 bg = get_color_from_minute(color_index);
-  window_set_background_color(window, bg);
+  void* layers[] = {
+    name_layer,
+    time_layer,
+    date_layer,
+    separator_layer,
+  };
+  window_set_user_data(window, layers);
 
-  GColor fg_color = gcolor_fgcolor(bg);
-  text_layer_set_text_color(name_layer, fg_color);
-  text_layer_set_text_color(time_layer, fg_color);
-  text_layer_set_text_color(date_layer, fg_color);
-  bitmap_layer_set_background_color(separator_layer, fg_color);
+  uint8_t color_index = DEBUG ? tick_time->tm_sec : tick_time->tm_min;
+  colorize_screen(window, color_index);
 }
 
 static void window_load(Window *window) {
