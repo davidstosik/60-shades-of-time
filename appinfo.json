@@ -6,7 +6,7 @@
   "versionCode": 1,
   "versionLabel": "1.1",
   "sdkVersion": "3",
-  "targetPlatforms": ["basalt"],
+  "targetPlatforms": ["aplite", "basalt"],
   "watchapp": {
     "watchface": true
   },
