@@ -37,13 +37,13 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  GFont font_gothic_18 = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+  GFont font_gothic_18 = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
   GFont font_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   GFont font_roboto_49 = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
 
   name_layer = text_layer_create((GRect) {
     .origin = { 0, 0 },
-    .size = { bounds.size.w, 23 }
+    .size = { bounds.size.w, 46 }
   });
   text_layer_set_text_alignment(name_layer, GTextAlignmentCenter);
   text_layer_set_overflow_mode(name_layer, GTextOverflowModeWordWrap);
