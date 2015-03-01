@@ -17,15 +17,16 @@ static GColor gcolor_fgcolor(GColor bgcolor) {
 
 void colorize_screen(Window *window, uint8_t color_index) {
   void** layers = window_get_user_data(window);
-  TextLayer *name_layer = layers[0];
-  TextLayer *time_layer = layers[1];
-  TextLayer *date_layer = layers[2];
-  BitmapLayer *separator_layer = layers[3];
+  BitmapLayer *bg_layer = layers[0];
+  TextLayer *name_layer = layers[1];
+  TextLayer *time_layer = layers[2];
+  TextLayer *date_layer = layers[3];
+  BitmapLayer *separator_layer = layers[4];
 
   text_layer_set_text(name_layer, color_names[color_index%2]);
 
   GColor bg = get_color_from_minute(color_index);
-  window_set_background_color(window, bg);
+  bitmap_layer_set_background_color(bg_layer, bg);
 
   GColor fg_color = gcolor_fgcolor(bg);
   text_layer_set_text_color(name_layer, fg_color);
@@ -120,15 +121,16 @@ static GColor gcolor_fgcolor(GColor bgcolor) {
 
 void colorize_screen(Window *window, uint8_t color_index) {
   void** layers = window_get_user_data(window);
-  TextLayer *name_layer = layers[0];
-  TextLayer *time_layer = layers[1];
-  TextLayer *date_layer = layers[2];
-  BitmapLayer *separator_layer = layers[3];
+  BitmapLayer *bg_layer = layers[0];
+  TextLayer *name_layer = layers[1];
+  TextLayer *time_layer = layers[2];
+  TextLayer *date_layer = layers[3];
+  BitmapLayer *separator_layer = layers[4];
 
   text_layer_set_text(name_layer, color_names[color_index]);
 
   GColor8 bg = get_color_from_minute(color_index);
-  window_set_background_color(window, bg);
+  bitmap_layer_set_background_color(bg_layer, bg);
 
   GColor fg_color = gcolor_fgcolor(bg);
   text_layer_set_text_color(name_layer, fg_color);

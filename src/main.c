@@ -4,6 +4,7 @@
 #define DEBUG false
 
 static Window *window;
+static BitmapLayer *bg_layer;
 static TextLayer *name_layer;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
@@ -22,6 +23,7 @@ void update_screen(struct tm *tick_time) {
   text_layer_set_text(date_layer, date_str);
 
   void* layers[] = {
+    bg_layer,
     name_layer,
     time_layer,
     date_layer,
@@ -40,6 +42,12 @@ static void window_load(Window *window) {
   GFont font_gothic_18 = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
   GFont font_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   GFont font_roboto_49 = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
+
+  bg_layer = bitmap_layer_create((GRect) {
+    .origin = { 0, 0 },
+    .size = { bounds.size.w, bounds.size.h }
+  });
+  layer_add_child(window_layer, bitmap_layer_get_layer(bg_layer));
 
   name_layer = text_layer_create((GRect) {
     .origin = { 0, 0 },
@@ -84,6 +92,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void window_unload(Window *window) {
+  bitmap_layer_destroy(bg_layer);
   text_layer_destroy(name_layer);
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
