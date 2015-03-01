@@ -5,14 +5,35 @@
 static char* color_names[] = {
   "Black",
   "White",
+  "Gray 75%",
+  "Gray 50%",
+  "Gray 25%",
 };
 
-static GColor get_color_from_minute(uint8_t minute) {
-  return (GColor)(minute%2);
+static GColor gcolor_fgcolor(uint8_t bgcolor_index) {
+  switch(bgcolor_index) {
+    case GColorWhite:
+    case 2:
+    case 3:
+      return GColorBlack;
+    case GColorBlack:
+    default:
+      return GColorWhite;
+  }
 }
 
-static GColor gcolor_fgcolor(GColor bgcolor) {
-  return 1 - bgcolor;
+static GBitmap *all_bg;
+static GBitmap *bg_bitmaps[5];
+static uint8_t bg_color_index;
+
+void bg_layer_update(Layer *bg_layer, GContext *ctx) {
+  if(!all_bg) {
+    all_bg = gbitmap_create_with_resource(RESOURCE_ID_BW_BG);
+    for (int i = 0; i < 5; i++) {
+      bg_bitmaps[i] = gbitmap_create_as_sub_bitmap(all_bg, GRect(2*i, 0, 2, 2));
+    }
+  }
+  graphics_draw_bitmap_in_rect(ctx, bg_bitmaps[bg_color_index], GRect(0,0,144,168));
 }
 
 void colorize_screen(Window *window, uint8_t color_index) {
@@ -23,16 +44,24 @@ void colorize_screen(Window *window, uint8_t color_index) {
   TextLayer *date_layer = layers[3];
   BitmapLayer *separator_layer = layers[4];
 
-  text_layer_set_text(name_layer, color_names[color_index%2]);
+  bg_color_index = color_index%5;
 
-  GColor bg = get_color_from_minute(color_index);
-  bitmap_layer_set_background_color(bg_layer, bg);
+  text_layer_set_text(name_layer, color_names[bg_color_index]);
 
-  GColor fg_color = gcolor_fgcolor(bg);
+  GColor fg_color = gcolor_fgcolor(bg_color_index);
   text_layer_set_text_color(name_layer, fg_color);
   text_layer_set_text_color(time_layer, fg_color);
   text_layer_set_text_color(date_layer, fg_color);
   bitmap_layer_set_background_color(separator_layer, fg_color);
+
+  layer_mark_dirty(bitmap_layer_get_layer(bg_layer));
+}
+
+void colorize_clean() {
+  gbitmap_destroy(all_bg);
+  for (int i = 0; i < 5; i++) {
+    gbitmap_destroy(bg_bitmaps[i]);
+  }
 }
 
 #else
@@ -100,6 +129,8 @@ static char* color_names[] = {
   "Pastel Yellow",
 };
 
+void bg_layer_update(Layer *layer, GContext *ctx) {}
+
 static GColor get_color_from_minute(uint8_t minute) {
   uint8_t argb = GColorBlackARGB8 + minute + 1;
 
@@ -138,5 +169,7 @@ void colorize_screen(Window *window, uint8_t color_index) {
   text_layer_set_text_color(date_layer, fg_color);
   bitmap_layer_set_background_color(separator_layer, fg_color);
 }
+
+void colorize_clean() {}
 
 #endif // ifndef PBL_COLOR

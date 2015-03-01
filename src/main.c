@@ -47,6 +47,7 @@ static void window_load(Window *window) {
     .origin = { 0, 0 },
     .size = { bounds.size.w, bounds.size.h }
   });
+  layer_set_update_proc(bitmap_layer_get_layer(bg_layer), bg_layer_update);
   layer_add_child(window_layer, bitmap_layer_get_layer(bg_layer));
 
   name_layer = text_layer_create((GRect) {
@@ -97,6 +98,7 @@ static void window_unload(Window *window) {
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
   bitmap_layer_destroy(separator_layer);
+  colorize_clean();
 }
 
 static void init(void) {
@@ -117,9 +119,6 @@ static void deinit(void) {
 
 int main(void) {
   init();
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
-
   app_event_loop();
   deinit();
 }

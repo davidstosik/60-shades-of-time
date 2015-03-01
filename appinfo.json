@@ -13,6 +13,12 @@
   "appKeys": {
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "file": "images/bw_bg.png",
+        "name": "BW_BG",
+        "type": "png"
+      }
+    ]
   }
 }
