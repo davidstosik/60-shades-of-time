@@ -38,7 +38,7 @@ void bg_layer_update(Layer *bg_layer, GContext *ctx) {
 
 void colorize_screen(Window *window, uint8_t color_index) {
   void** layers = window_get_user_data(window);
-  BitmapLayer *bg_layer = layers[0];
+  Layer *bg_layer = layers[0];
   TextLayer *name_layer = layers[1];
   TextLayer *time_layer = layers[2];
   TextLayer *date_layer = layers[3];
@@ -54,7 +54,7 @@ void colorize_screen(Window *window, uint8_t color_index) {
   text_layer_set_text_color(date_layer, fg_color);
   bitmap_layer_set_background_color(separator_layer, fg_color);
 
-  layer_mark_dirty(bitmap_layer_get_layer(bg_layer));
+  layer_mark_dirty(bg_layer);
 }
 
 void colorize_clean() {
@@ -129,7 +129,12 @@ static char* color_names[] = {
   "Pastel Yellow",
 };
 
-void bg_layer_update(Layer *layer, GContext *ctx) {}
+static GColor8 bg_color;
+
+void bg_layer_update(Layer *layer, GContext *ctx) {
+  graphics_context_set_fill_color(ctx, bg_color);
+  graphics_fill_rect(ctx, layer_get_frame(layer), 0, GCornerNone);
+}
 
 static GColor get_color_from_minute(uint8_t minute) {
   uint8_t argb = GColorBlackARGB8 + minute + 1;
@@ -152,7 +157,7 @@ static GColor gcolor_fgcolor(GColor bgcolor) {
 
 void colorize_screen(Window *window, uint8_t color_index) {
   void** layers = window_get_user_data(window);
-  BitmapLayer *bg_layer = layers[0];
+  Layer *bg_layer = layers[0];
   TextLayer *name_layer = layers[1];
   TextLayer *time_layer = layers[2];
   TextLayer *date_layer = layers[3];
@@ -160,10 +165,10 @@ void colorize_screen(Window *window, uint8_t color_index) {
 
   text_layer_set_text(name_layer, color_names[color_index]);
 
-  GColor8 bg = get_color_from_minute(color_index);
-  bitmap_layer_set_background_color(bg_layer, bg);
+  bg_color = get_color_from_minute(color_index);
+  layer_mark_dirty(bg_layer);
 
-  GColor fg_color = gcolor_fgcolor(bg);
+  GColor fg_color = gcolor_fgcolor(bg_color);
   text_layer_set_text_color(name_layer, fg_color);
   text_layer_set_text_color(time_layer, fg_color);
   text_layer_set_text_color(date_layer, fg_color);

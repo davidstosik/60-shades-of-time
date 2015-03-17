@@ -4,7 +4,7 @@
 #define DEBUG false
 
 static Window *window;
-static BitmapLayer *bg_layer;
+static Layer *bg_layer;
 static TextLayer *name_layer;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
@@ -17,7 +17,6 @@ void update_screen(struct tm *tick_time) {
 
   strftime(time_str, sizeof(time_str), time_format, tick_time);
   strftime(date_str, sizeof(date_str), "%B %e", tick_time);
-
 
   text_layer_set_text(time_layer, time_str);
   text_layer_set_text(date_layer, date_str);
@@ -43,12 +42,12 @@ static void window_load(Window *window) {
   GFont font_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   GFont font_roboto_49 = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
 
-  bg_layer = bitmap_layer_create((GRect) {
+  bg_layer = layer_create((GRect) {
     .origin = { 0, 0 },
     .size = { bounds.size.w, bounds.size.h }
   });
-  layer_set_update_proc(bitmap_layer_get_layer(bg_layer), bg_layer_update);
-  layer_add_child(window_layer, bitmap_layer_get_layer(bg_layer));
+  layer_set_update_proc(bg_layer, bg_layer_update);
+  layer_add_child(window_layer, bg_layer);
 
   name_layer = text_layer_create((GRect) {
     .origin = { 0, 0 },
@@ -97,7 +96,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void window_unload(Window *window) {
-  bitmap_layer_destroy(bg_layer);
+  layer_destroy(bg_layer);
   text_layer_destroy(name_layer);
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
