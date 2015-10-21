@@ -49,8 +49,13 @@ static void window_load(Window *window) {
   layer_set_update_proc(bg_layer, bg_layer_update);
   layer_add_child(window_layer, bg_layer);
 
+  int name_layer_origin_y = 0;
+  #ifdef PBL_PLATFORM_CHALK
+    name_layer_origin_y = 30;
+  #endif
+
   name_layer = text_layer_create((GRect) {
-    .origin = { 0, 0 },
+    .origin = { 0, name_layer_origin_y },
     .size = { bounds.size.w, 46 }
   });
   text_layer_set_text_alignment(name_layer, GTextAlignmentCenter);
@@ -63,7 +68,12 @@ static void window_load(Window *window) {
     .origin = { 0, bounds.size.h/2 + 10 },
     .size = { bounds.size.w - 10, 50 }
   });
-  text_layer_set_text_alignment(time_layer, GTextAlignmentRight);
+
+  GTextAlignment clock_align = GTextAlignmentRight;
+  #ifdef PBL_PLATFORM_CHALK
+    clock_align = GTextAlignmentCenter;
+  #endif
+  text_layer_set_text_alignment(time_layer, clock_align);
   text_layer_set_font(time_layer, font_roboto_49);
   text_layer_set_background_color(time_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
@@ -72,7 +82,12 @@ static void window_load(Window *window) {
     .origin = { 10, bounds.size.h/2 - 19 },
     .size = { bounds.size.w - 20, 31 }
   });
-  text_layer_set_text_alignment(date_layer, GTextAlignmentLeft);
+
+  GTextAlignment date_align = GTextAlignmentLeft;
+  #ifdef PBL_PLATFORM_CHALK
+    date_align = GTextAlignmentCenter;
+  #endif
+  text_layer_set_text_alignment(date_layer, date_align);
   text_layer_set_font(date_layer, font_gothic_24_bold);
   text_layer_set_background_color(date_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(date_layer));

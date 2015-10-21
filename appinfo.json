@@ -3,10 +3,10 @@
   "shortName": "60shades",
   "longName": "60 Shades of Time",
   "companyName": "David Stosik",
-  "versionCode": 1.4,
-  "versionLabel": "1.4",
+  "versionCode": 1.5,
+  "versionLabel": "1.5",
   "sdkVersion": "3",
-  "targetPlatforms": ["aplite", "basalt"],
+  "targetPlatforms": ["aplite", "basalt", "chalk"],
   "watchapp": {
     "watchface": true
   },
